@@ -11,6 +11,8 @@
 .byte $00
 .byte $00, $00, $00, $00, $00 ; filler bytes
 .segment "ZEROPAGE" ; LSB 0 - FF
+; the current name table row to be copied to VRAM at the next NMI
+CURRENT_NT_ROW: .byte $00 
 CURSOR_X: .byte $00 
 CURSOR_Y: .byte $00
 STICKYINPUT: .byte $00 ; Only one input per click
@@ -129,6 +131,16 @@ ClearNametable:
     LDA #$60
     STA CURSOR_X
 
+    ; TODO: delete me later
+    ; Test game state
+    LDA #%01011000
+    STA STATE
+    LDA #%10101000
+    STA STATE+1
+    LDA #%10101000
+    STA STATE+2
+    JSR drawCharacter 
+
     LDA #%10010000 ; enable NMI change background to use second chr set of tiles ($1000)
     STA $2000
     ; Enabling sprites and background for left-most 8 pixels
@@ -136,30 +148,28 @@ ClearNametable:
     LDA #%00011110
     STA $2001
 
-    ; delete me later
-    LDA #%01011000
-    STA STATE
-    LDA #%10101000
-    STA STATE+1
-    LDA #%10101000
-    STA STATE+2
 
 Loop:
+    JSR updateCursor
     JMP Loop
     .include "drawTileAtIndex.asm"
     .include "drawMetatile.asm"
     .include "readJoy.asm"
     .include "drawCharacter.asm"
-    .include "drawCursor.asm"
+    .include "updateCursor.asm"
     .include "drawGrid.asm"
     .include "handleButton.asm"
 
 
 NMI:
+    PHA
+    TXA
+    PHA
+    TYA
+    PHA
     LDA #$02 ; copy sprite data from $0200 => PPU memory for display
     STA $4014
-    JSR drawCursor
-    JSR drawCharacter  
+
     ; restore
     LDA #$20
     STA $2006
@@ -171,6 +181,11 @@ NMI:
     JSR readjoy
     JSR handleButton
 
+    PLA
+    TAY
+    PLA
+    TAX
+    PLA
     RTI
 
 PaletteData: ; maxvalue 0x36

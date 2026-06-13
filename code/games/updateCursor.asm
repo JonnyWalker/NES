@@ -1,5 +1,5 @@
-drawCursor:
-   ; move the sprite up or down by updating the OAM Y Attr
+updateCursor:
+    ; move the sprite up or down by updating the OAM Y Attr
     LDX #$00
     LDA CURSOR_Y
 MoveSpritesY:
