@@ -1,16 +1,16 @@
+STICKY_TIME = $20
+
 handleButton:
     LDA buttons
     BEQ NoButtonHandled ; If no button pressed reset Sticky time
 
-    LDX STICKYINPUT
+    LDX STICKYINPUT     ; Handle next button when sticky time is over
     BEQ BUTTONHANDLER
-    DEX
+    DEX                 ; dec stick time
     STX STICKYINPUT
     JMP EndButton
     
 BUTTONHANDLER:
-    LDX #$10
-    STX STICKYINPUT
     AND #%00000100
     BNE MOVE_UP
     
@@ -64,7 +64,7 @@ NoButtonHandled:
     
 ButtonHandled:
     ; Increase Sticky Time.
-    LDX #$20
+    LDX #(STICKY_TIME)
     STX STICKYINPUT
 EndButton:    
     RTS
