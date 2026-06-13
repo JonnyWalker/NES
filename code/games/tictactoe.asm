@@ -137,12 +137,16 @@ ClearNametable:
     STA $2001
 
     ; delete me later
-    LDA #%01001000
+    LDA #%01011000
     STA STATE
+    LDA #%10101000
+    STA STATE+1
+    LDA #%10101000
+    STA STATE+2
 
 Loop:
     JMP Loop
-
+    .include "drawTileAtIndex.asm"
     .include "drawMetatile.asm"
     .include "readJoy.asm"
     .include "drawCharacter.asm"
@@ -154,26 +158,18 @@ Loop:
 NMI:
     LDA #$02 ; copy sprite data from $0200 => PPU memory for display
     STA $4014
-    
-
-    JSR readjoy
-    JSR handleButton
     JSR drawCursor
-    
-
-
-    LDA #$21
-    STA $2006
-    LDA #$6C
-    STA $2006
-    LDX #$00
-    LDY #$00
-    JSR drawCharacter
-
+    JSR drawCharacter  
+    ; restore
     LDA #$20
     STA $2006
     LDA #$00
     STA $2006
+    LDA #$00
+    STA $2007
+
+    JSR readjoy
+    JSR handleButton
 
     RTI
 
