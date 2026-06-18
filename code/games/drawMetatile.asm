@@ -1,5 +1,6 @@
 .segment "ZEROPAGE"
-
+U1: .byte $00
+U2: .byte $00
 METATILE_W: .byte $00
 METATILE_H: .byte $00
 

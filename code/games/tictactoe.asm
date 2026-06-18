@@ -11,15 +11,10 @@
 .byte $00
 .byte $00, $00, $00, $00, $00 ; filler bytes
 .segment "ZEROPAGE" ; LSB 0 - FF
-; the current name table row to be copied to VRAM at the next NMI
-CURRENT_NT_ROW: .byte $00 
 CURSOR_X: .byte $00 
 CURSOR_Y: .byte $00
 STICKYINPUT: .byte $00 ; Only one input per click
-
 STATE: .byte $00, $00, $00 ; 01 is X 10 is 0, 00 is nothing. 11 is undef. Only 6 Bit used per Byte. Each byte saves one Row. 
-U1: .byte $00
-U2: .byte $00
 buttons: .res 1
 .segment "STARTUP"
 Reset:
@@ -162,7 +157,7 @@ Loop:
 
 
 NMI:
-    PHA
+    PHA ; TODO: does NMI call already save A,X,Y?
     TXA
     PHA
     TYA
@@ -179,7 +174,7 @@ NMI:
     STA $2007
 
     JSR readjoy
-    JSR handleButton
+    JSR handleButton ; FIXME: cannot move to game loop, sticky time $FF ist to low
 
     PLA
     TAY
@@ -197,19 +192,6 @@ SpriteData:
   .byte $08, $02, $01, $10
   .byte $10, $03, $01, $08
   .byte $10, $04, $01, $10
-
-
-GridData:
-  .byte $39, $31, $31, $35, $31, $31, $35, $31, $31, $3A
-  .byte $30, $00, $00, $30, $00, $00, $30, $00, $00, $30
-  .byte $30, $00, $00, $30, $00, $00, $30, $00, $00, $30
-  .byte $33, $31, $31, $32, $31, $31, $32, $31, $31, $36 
-  .byte $30, $00, $00, $30, $00, $00, $30, $00, $00, $30
-  .byte $30, $00, $00, $30, $00, $00, $30, $00, $00, $30
-  .byte $33, $31, $31, $32, $31, $31, $32, $31, $31, $36 
-  .byte $30, $00, $00, $30, $00, $00, $30, $00, $00, $30
-  .byte $30, $00, $00, $30, $00, $00, $30, $00, $00, $30
-  .byte $37, $31, $31, $34, $31, $31, $34, $31, $31, $38 
 
 .segment "VECTORS"
     .word NMI
