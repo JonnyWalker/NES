@@ -23,12 +23,16 @@ BUTTONHANDLER:
     BNE MOVE_UP 
 
     LDA buttons
-    AND #%0000001
+    AND #%00000001
     BNE MOVE_RIGHT
 
     LDA buttons
-    AND #%0000010
+    AND #%00000010
     BNE MOVE_LEFT
+
+    LDA buttons
+    AND #%10000000
+    BNE A_BUTTON
     JMP EndButton
 
 MOVE_DOWN:
@@ -79,6 +83,17 @@ MOVE_LEFT:
     STA CURSOR_X
     JMP ButtonHandled
 
+A_BUTTON:
+    LDA CURSOR_PLAETTE
+    BEQ SwitchToPalette01
+    LDA #$00
+    STA CURSOR_PLAETTE
+    JMP ButtonHandled
+
+SwitchToPalette01:
+    LDA #$01
+    STA CURSOR_PLAETTE
+    JMP ButtonHandled
 
 NoButtonHandled:
     ; Reset Sticky Time.

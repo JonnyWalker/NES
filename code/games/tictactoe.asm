@@ -13,6 +13,7 @@
 .segment "ZEROPAGE" ; LSB 0 - FF
 CURSOR_X: .byte $00 
 CURSOR_Y: .byte $00
+CURSOR_PLAETTE: .byte $00 ; used to change cursor color
 STICKYINPUT: .byte $00 ; Only one input per click
 STATE: .byte $00, $00, $00 ; 01 is X 10 is 0, 00 is nothing. 11 is undef. Only 6 Bit used per Byte. Each byte saves one Row. 
 buttons: .res 1
@@ -125,6 +126,8 @@ ClearNametable:
     STA CURSOR_Y
     LDA #$60
     STA CURSOR_X
+    LDA #$00
+    STA CURSOR_PLAETTE
 
     ; TODO: delete me later
     ; Test game state
@@ -145,9 +148,11 @@ ClearNametable:
 
 
 Loop:
+    JSR readjoy
     JSR handleButton
     JSR updateCursor
     ; asure this code only runs once a frame (e.g. for stick timing)
+    ; by waiting for the vblank (next code will be NMI)
 :
     BIT $2002 ; wait for vblank 
     BPL :-
@@ -167,16 +172,16 @@ NMI:
     PHA
     TYA
     PHA
-    LDA #$02 ; copy sprite data from $0200 => PPU memory for display
-    STA $4014
 
+    ; copy sprite data from $0200 => PPU memory for display
+    LDA #$02 
+    STA $4014
     ; restore TODO: why do we need this?
     LDA #$20
     STA $2006
     LDA #$00
     STA $2006
 
-    JSR readjoy
     PLA
     TAY
     PLA
@@ -185,8 +190,8 @@ NMI:
     RTI
 
 PaletteData: ; maxvalue 0x36
-  .byte $3F,$10,$1A,$0F,$3F,$36,$17,$0f,$3F,$30,$21,$0f,$3F,$27,$17,$0F  ;background palette data
-  .byte $3F,$16,$27,$18,$3F,$1A,$30,$27,$3F,$16,$30,$27,$3F,$0F,$36,$17  ;sprite palette data
+  .byte $3F,$20,$1A,$0F, $3F,$10,$1A,$0F, $3F,$30,$21,$0f, $3F,$27,$17,$0F  ;background palette data
+  .byte $3F,$16,$27,$18, $3F,$1A,$30,$27, $3F,$16,$30,$27, $3F,$0F,$36,$17  ;sprite palette data
 
 SpriteData:
   .byte $08, $01, $01, $08 ; Y,Tileindex, ATTR, X

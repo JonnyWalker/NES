@@ -39,4 +39,13 @@ MoveSpritesX:
     SBC #$08     ; make sure the original CURSOR_X is used for the first tile
     CPX #$10
     BNE MoveSpritesX
+; (possibly) change cursor color
+    LDA CURSOR_PLAETTE
+    STA $0202
+    LDA CURSOR_PLAETTE
+    STA $0206
+    LDA CURSOR_PLAETTE
+    STA $020A
+    LDA CURSOR_PLAETTE
+    STA $020E    
     RTS
