@@ -1,4 +1,8 @@
 STICKY_TIME = $20
+RIGHTMOST_CURSOR = $90
+LEFTMOST_CURSOR = $60
+LOWEST_CURSOR = $85
+HIGHEST_CURSOR = $55
 
 handleButton:
     LDA buttons
@@ -12,11 +16,11 @@ handleButton:
     
 BUTTONHANDLER:
     AND #%00000100
-    BNE MOVE_UP
+    BNE MOVE_DOWN
     
     LDA buttons
     AND #%00001000
-    BNE MOVE_DOWN 
+    BNE MOVE_UP 
 
     LDA buttons
     AND #%0000001
@@ -27,14 +31,24 @@ BUTTONHANDLER:
     BNE MOVE_LEFT
     JMP EndButton
 
-MOVE_UP:
+MOVE_DOWN:
+    ; only move down if not at lowest row of grid
+    LDA CURSOR_Y
+    CMP #(LOWEST_CURSOR)
+    BEQ ButtonHandled
+
     LDA CURSOR_Y
     CLC
     ADC #$18
     STA CURSOR_Y
     JMP ButtonHandled
 
-MOVE_DOWN:
+MOVE_UP:
+    ; only move up if not at highest row of grid
+    LDA CURSOR_Y
+    CMP #(HIGHEST_CURSOR)
+    BEQ ButtonHandled
+
     LDA CURSOR_Y
     SEC
     SBC #$18
@@ -42,6 +56,11 @@ MOVE_DOWN:
     JMP ButtonHandled
 
 MOVE_RIGHT:
+    ; only move right if not at the most right column of grid
+    LDA CURSOR_X
+    CMP #(RIGHTMOST_CURSOR)
+    BEQ ButtonHandled
+
     LDA CURSOR_X
     CLC
     ADC #$18
@@ -49,6 +68,11 @@ MOVE_RIGHT:
     JMP ButtonHandled
 
 MOVE_LEFT:
+    ; only move left if not at the most left column of grid
+    LDA CURSOR_X
+    CMP #(LEFTMOST_CURSOR)
+    BEQ ButtonHandled
+
     LDA CURSOR_X
     SEC
     SBC #$18

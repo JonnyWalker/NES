@@ -1,3 +1,4 @@
+; https://www.nesdev.org/wiki/Controller_reading_code
 ; At the same time that we strobe bit 0, we initialize the ring counter
 ; so we're hitting two birds with one stone here
 readjoy:

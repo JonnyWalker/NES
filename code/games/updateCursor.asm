@@ -1,5 +1,6 @@
 updateCursor:
     ; move the sprite up or down by updating the OAM Y Attr
+    ; the cursor is a 2x2 tile sprite
     LDX #$00
     LDA CURSOR_Y
 MoveSpritesY:
