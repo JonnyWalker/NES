@@ -121,7 +121,7 @@ ClearNametable:
     STA $2005 ; Y position (this also clears the w register)
 
     ; move selector tile to first square
-    LDA #$57
+    LDA #$55
     STA CURSOR_Y
     LDA #$60
     STA CURSOR_X

@@ -1,13 +1,13 @@
 ; draws games 3x3 (empty) grid
 drawGrid:
-    LDA #$21
+    LDA #$21  ; start address of grid
     STA $2006
     LDA #$4B
     STA $2006
 
-    LDX #10 ; number of rows
+    LDX #10   ; number of rows
     LDA #$00 
-    LDY #$00 ; index in GridData
+    LDY #$00  ; index in GridData
 PrintGrid:
     ; save index of outer loop
     TXA
@@ -15,7 +15,7 @@ PrintGrid:
     LDX #10 ; row index 10-X
 
 PrintRow:
-    LDA GridData, Y
+    LDA GridData, Y ; write grid data to ppu memory
     STA $2007
     INY
     DEX
@@ -47,15 +47,3 @@ GridData: ; grid tile numbers
   .byte $30, $00, $00, $30, $00, $00, $30, $00, $00, $30
   .byte $30, $00, $00, $30, $00, $00, $30, $00, $00, $30
   .byte $37, $31, $31, $34, $31, $31, $34, $31, $31, $38 
-
-;BUFFER_LOCATION:
-;  .byte $05, $4B
-;  .byte $05, $6B
-;  .byte $05, $8B
-;  .byte $05, $AB
-;  .byte $05, $CB
-;  .byte $05, $EB
-;  .byte $06, $0B
-;  .byte $06, $2B
-;  .byte $06, $4B
-;  .byte $06, $6B
