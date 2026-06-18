@@ -15,7 +15,16 @@ spriteXY_To_NameTableIndex:
     LDA #$00
     STA NAME_TABLE_INDEX_HI
 
-    ; TODO: compute HI 
+    ; compute HI (first part) by "shifting" Bit 7 and 6
+    LDA CURSOR_Y
+    AND #%11000000
+    LSR
+    LSR
+    LSR 
+    LSR 
+    LSR 
+    LSR
+    STA NAME_TABLE_INDEX_HI 
 
     ; compute LOW
     LDA CURSOR_X
@@ -32,5 +41,10 @@ spriteXY_To_NameTableIndex:
     CLC
     ADC NAME_TABLE_INDEX_LO
     STA NAME_TABLE_INDEX_LO
+
+    ; second part of HI computation
+    LDA NAME_TABLE_INDEX_HI
+    ADC #$00
+    STA NAME_TABLE_INDEX_HI
 
     RTS
