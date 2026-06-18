@@ -1,11 +1,11 @@
 updateCursor:
     ; move the sprite up or down by updating the OAM Y Attr
-    ; the cursor is a 2x2 tile sprite
+    ; the cursor is a 2x2 tile sprite: modifies 4 sprites in every loop
     LDX #$00
     LDA CURSOR_Y
 MoveSpritesY:
-    STA $0200, X ; first tile at $0200 + X
-    STA $0204, X ; second tile at $0204 + X
+    STA $0200, X ; first tile at $0200 + X = Y-POS
+    STA $0204, X ; second tile at $0204 + X = Y-POS
     INX
     INX
     INX
@@ -23,10 +23,10 @@ MoveSpritesY:
     LDX #$00
     LDA CURSOR_X
 MoveSpritesX:
-    STA $0203, X
+    STA $0203, X ; X-POS
     CLC          ; every second tile is 8 pixels to the right (modify CURSOR_X by 8)
     ADC #$08
-    STA $0207, X
+    STA $0207, X ; X-POS
     INX
     INX
     INX

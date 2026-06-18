@@ -1,7 +1,6 @@
 ; Draw X, O or nothing at row of register x and y
 drawCharacter:
 
-    ; TODO: maybe to much code for NMI?
     LDY #$00       ; location index in Location table
 DrawLoop:
     CPY #$00

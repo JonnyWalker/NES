@@ -1,7 +1,6 @@
 .segment "ZEROPAGE"
-
-NAME_TABLE_INDEX_HI: .byte $00
 NAME_TABLE_INDEX_LO: .byte $00
+NAME_TABLE_INDEX_HI: .byte $00
 
 .segment "STARTUP"
 

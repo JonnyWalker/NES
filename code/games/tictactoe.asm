@@ -15,7 +15,10 @@ CURSOR_X: .byte $00
 CURSOR_Y: .byte $00
 CURSOR_PLAETTE: .byte $00 ; used to change cursor color
 STICKYINPUT: .byte $00 ; Only one input per click
-STATE: .byte $00, $00, $00 ; 01 is X 10 is 0, 00 is nothing. 11 is undef. Only 6 Bit used per Byte. Each byte saves one Row. 
+; 01 is X 10 is 0, 00 is nothing. 11 is undef. Only 6 Bit used per Byte. Each byte saves one Row. 
+STATE: .byte $00, $00, $00 
+; if unequal 00: NMI will draw character at next frame at cursor x,y
+DRAW_CHARATER_NEXT_FRAME: .byte $00 ; TODO: Implement me
 buttons: .res 1
 .segment "STARTUP"
 Reset:
@@ -139,6 +142,12 @@ ClearNametable:
     STA STATE+2
     JSR drawCharacter 
 
+    ; restore name table address to default
+    LDA #$20
+    STA $2006
+    LDA #$00
+    STA $2006
+
     LDA #%10010000 ; enable NMI change background to use second chr set of tiles ($1000)
     STA $2000
     ; Enabling sprites and background for left-most 8 pixels
@@ -146,11 +155,11 @@ ClearNametable:
     LDA #%00011110
     STA $2001
 
-
 Loop:
     JSR readjoy
     JSR handleButton
     JSR updateCursor
+    JSR spriteXY_To_NameTableIndex
     ; asure this code only runs once a frame (e.g. for stick timing)
     ; by waiting for the vblank (next code will be NMI)
 :
@@ -164,6 +173,7 @@ Loop:
     .include "updateCursor.asm"
     .include "drawGrid.asm"
     .include "handleButton.asm"
+    .include "computeNTIndex.asm"
 
 
 NMI:
@@ -176,11 +186,6 @@ NMI:
     ; copy sprite data from $0200 => PPU memory for display
     LDA #$02 
     STA $4014
-    ; restore TODO: why do we need this?
-    LDA #$20
-    STA $2006
-    LDA #$00
-    STA $2006
 
     PLA
     TAY
