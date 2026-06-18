@@ -12,19 +12,20 @@
 
 - Example: Sets the background color to blue [01_example.asm](./code/01_example.asm)
 
-- Task 1: Assemble and link the file and create a nes file using `ca65` and `ld65`. 
+- Task 1: **Assemble** and link the file and create a nes file using `ca65` and `ld65`. 
   The command is at the top of the first example.
 
-- Task 2: Look up the assembly commands in the StartUp segment and describe what they do. Ignore all memory addresses for now. Use this link: http://mimuma.pl/opcodes/ 
+- Task 2: Look up the **assembly commands** in the StartUp segment and describe what they do. Ignore all memory addresses for now. Use this link: http://mimuma.pl/opcodes/ 
 
-- Task 3: Look up every memory address (like $2000) and find the name of the hardware register which is mapped to this location. Use this link: http://en.wikibooks.org/wiki/NES_Programming
+- Task 3: Look up every **memory address** (like $2000) and find the name of the hardware register which is mapped to this location. Use this link: http://en.wikibooks.org/wiki/NES_Programming
 
-- Task 4: Look up the effect of every Bit of the `PPUCTRL` ($2000) and `PPUMASK` ($2001) register. Use this link: http://nesdev.org/wiki/PPU_registers
+- Task 4: Look up the effect of **every Bit** of the `PPUCTRL` ($2000) and `PPUMASK` ($2001) register. Use this link: http://nesdev.org/wiki/PPU_registers
 
-- Task 5: Explain how the example writes the colors to the PPU RAM using this picture: [cpu_ppu_communication](
+- Task 5: Explain how the example **writes the colors** to the PPU RAM using this picture: [cpu_ppu_communication](
 https://bugzmanov.github.io/nes_ebook/images/ch6.1/image_2_cpu_ppu_communication.png)
+
 - Task 6: Open the NES file with fceux. 
-  Compare the numbers in `PaletteData` in the assembly file with the numbers shown in fceux `Tools->Palette Editor`.
+  **Compare** the numbers in `PaletteData` in the assembly file with the numbers shown in fceux `Tools->Palette Editor`.
 
 - Exercise: Set the background color to red [01_solution.asm](./code/01_solution.asm)
 
