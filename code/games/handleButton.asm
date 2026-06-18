@@ -84,6 +84,10 @@ MOVE_LEFT:
     JMP ButtonHandled
 
 A_BUTTON:
+    ; TODO: impl. game logic. For now: always draw
+    LDA #$01
+    STA DRAW_CHARATER_NEXT_FRAME
+
     LDA CURSOR_PLAETTE
     BEQ SwitchToPalette01
     LDA #$00

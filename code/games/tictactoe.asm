@@ -177,7 +177,7 @@ Loop:
 
 
 NMI:
-    PHA ; TODO: does NMI call already save A,X,Y?
+    PHA 
     TXA
     PHA
     TYA
@@ -186,6 +186,19 @@ NMI:
     ; copy sprite data from $0200 => PPU memory for display
     LDA #$02 
     STA $4014
+
+    LDA DRAW_CHARATER_NEXT_FRAME
+    BEQ drawNothing
+    LDA #$00
+    STA DRAW_CHARATER_NEXT_FRAME
+    JSR changeCharacterAtNT
+drawNothing:
+
+    ; restore name table address to default
+    LDA #$20
+    STA $2006
+    LDA #$00
+    STA $2006
 
     PLA
     TAY

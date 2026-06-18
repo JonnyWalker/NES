@@ -24,7 +24,8 @@ spriteXY_To_NameTableIndex:
     LSR 
     LSR 
     LSR
-    STA NAME_TABLE_INDEX_HI 
+    ORA #$20
+    STA NAME_TABLE_INDEX_HI
 
     ; compute LOW
     LDA CURSOR_X
