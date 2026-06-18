@@ -145,7 +145,12 @@ ClearNametable:
 
 
 Loop:
+    JSR handleButton
     JSR updateCursor
+    ; asure this code only runs once a frame (e.g. for stick timing)
+:
+    BIT $2002 ; wait for vblank 
+    BPL :-
     JMP Loop
     .include "drawTileAtIndex.asm"
     .include "drawMetatile.asm"
@@ -165,17 +170,13 @@ NMI:
     LDA #$02 ; copy sprite data from $0200 => PPU memory for display
     STA $4014
 
-    ; restore
+    ; restore TODO: why do we need this?
     LDA #$20
     STA $2006
     LDA #$00
     STA $2006
-    LDA #$00
-    STA $2007
 
     JSR readjoy
-    JSR handleButton ; FIXME: cannot move to game loop, sticky time $FF ist to low
-
     PLA
     TAY
     PLA
