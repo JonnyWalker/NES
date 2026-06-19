@@ -16,14 +16,20 @@ CURSOR_Y: .byte $00
 CURSOR_PLAETTE: .byte $00 ; used to change cursor color
 STICKYINPUT: .byte $00 ; Only one input per click
 ; $58 is X, 
-; $4F is 0
-; 00 is nothing
+; $4F is O
+; $00 is nothing
 STATE: .byte $00, $00, $00, $00, $00, $00, $00, $00, $00
 STATE_POINTER: .byte $00
+; $58 = X wins, 
+; $4F = O wins,
+; $00 = no winner (yet)
+WINNER: .byte $00
 ; if unequal 00: NMI will draw character at next frame at cursor x,y
 DRAW_CHARATER_NEXT_FRAME: .byte $00 
 buttons: .res 1
 .segment "STARTUP"
+X_ASCII_VALUE = $58
+O_ASCII_VALUE = $4F
 Reset:
     SEI ; Disables all interrupts
     CLD ; disable decimal mode
@@ -168,6 +174,10 @@ Loop:
     JSR updateCursor
     JSR updateStatePointer
     JSR spriteXY_To_NameTableIndex
+    LDX #(X_ASCII_VALUE)
+    JSR checkAndSetWinner
+    LDX #(O_ASCII_VALUE)
+    JSR checkAndSetWinner
     ; asure this code only runs once a frame (e.g. for stick timing)
     ; by waiting for the vblank (next code will be NMI)
 :
@@ -181,7 +191,7 @@ Loop:
     .include "drawGrid.asm"
     .include "handleButton.asm"
     .include "computeNTIndex.asm"
-
+    .include "checkAndSetWinner.asm"
 
 NMI:
     PHA 
@@ -201,13 +211,13 @@ NMI:
 
     LDA CURSOR_PLAETTE
     BEQ drawX 
-    JSR changeCharacterAtNT2O
-    LDA #$58
+    LDA #(O_ASCII_VALUE)
     LDX STATE_POINTER
     STA STATE, X
+    JSR changeCharacterAtNT2O
     JMP drawNothing
 drawX:
-    LDA #$4F
+    LDA #(X_ASCII_VALUE)
     LDX STATE_POINTER
     STA STATE, X
     JSR changeCharacterAtNT2X
