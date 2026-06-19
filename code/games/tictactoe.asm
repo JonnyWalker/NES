@@ -15,39 +15,41 @@ CURSOR_X: .byte $00
 CURSOR_Y: .byte $00
 CURSOR_PLAETTE: .byte $00 ; used to change cursor color
 STICKYINPUT: .byte $00 ; Only one input per click
-; 01 is X 10 is 0, 00 is nothing. 11 is undef. Only 6 Bit used per Byte. Each byte saves one Row. 
-STATE: .byte $00, $00, $00 
+; 01 is X, 
+; 10 is 0
+; 00 is nothing. 11 is undef. 
+STATE: .byte $00, $00, $00, $00, $00, $00, $00, $00, $00
 ; if unequal 00: NMI will draw character at next frame at cursor x,y
-DRAW_CHARATER_NEXT_FRAME: .byte $00 ; TODO: Implement me
+DRAW_CHARATER_NEXT_FRAME: .byte $00 
 buttons: .res 1
 .segment "STARTUP"
 Reset:
     SEI ; Disables all interrupts
     CLD ; disable decimal mode
 
-     ; Disable sound IRQ (for some reason everthing is broken without this line)
-     LDX #$40
-     STX $4017
+    ; Disable sound IRQ (for some reason everthing is broken without this line)
+    LDX #$40
+    STX $4017
 
-     ; Initialize the stack register
-     LDX #$FF
-     TXS
+    ; Initialize the stack register
+    LDX #$FF
+    TXS
 
-;     ;INX ; #$FF + 1 => #$00
-     LDX #$00
+;   INX ; #$FF + 1 => #$00
+    LDX #$00
 
-     ; Zero out the PPU registers
-     STX $2000
-     STX $2001
+    ; Zero out the PPU registers
+    STX $2000
+    STX $2001
 
-     STX $4010
+    STX $4010
 
- :
-     BIT $2002 ; wait for vblank
-     BPL :-
+:
+    BIT $2002 ; wait for vblank
+    BPL :-
 
 ;     ;TXA
-     LDA #$00
+    LDA #$00
 
 CLEARMEM:
     STA $0000, X ; $0000 => $00FF
@@ -67,7 +69,7 @@ CLEARMEM:
     BIT $2002
     BPL :-
 
-    LDA #$02  ; high byte von sprites
+    LDA #$02  ; high byte of sprites
     STA $4014
     NOP
 
@@ -132,16 +134,6 @@ ClearNametable:
     LDA #$00
     STA CURSOR_PLAETTE
 
-    ; TODO: delete me later
-    ; Test game state
-    ;LDA #%01011000
-    ;STA STATE
-    ;LDA #%10101000
-    ;STA STATE+1
-    ;LDA #%10101000
-    ;STA STATE+2
-    ;JSR drawCharacter 
-
     ; restore name table address to default
     LDA #$20
     STA $2006
@@ -167,7 +159,6 @@ Loop:
     BPL :-
     JMP Loop
     .include "drawTileAtIndex.asm"
-    .include "drawMetatile.asm"
     .include "readJoy.asm"
     .include "drawCharacter.asm"
     .include "updateCursor.asm"
