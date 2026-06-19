@@ -134,13 +134,13 @@ ClearNametable:
 
     ; TODO: delete me later
     ; Test game state
-    LDA #%01011000
-    STA STATE
-    LDA #%10101000
-    STA STATE+1
-    LDA #%10101000
-    STA STATE+2
-    JSR drawCharacter 
+    ;LDA #%01011000
+    ;STA STATE
+    ;LDA #%10101000
+    ;STA STATE+1
+    ;LDA #%10101000
+    ;STA STATE+2
+    ;JSR drawCharacter 
 
     ; restore name table address to default
     LDA #$20
