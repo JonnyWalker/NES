@@ -190,8 +190,14 @@ NMI:
     LDA DRAW_CHARATER_NEXT_FRAME
     BEQ drawNothing
     LDA #$00
-    STA DRAW_CHARATER_NEXT_FRAME
-    JSR changeCharacterAtNT
+    STA DRAW_CHARATER_NEXT_FRAME ; do not draw next frame
+
+    LDA CURSOR_PLAETTE
+    BEQ drawX 
+    JSR changeCharacterAtNT2O
+    JMP drawNothing
+drawX:
+    JSR changeCharacterAtNT2X
 drawNothing:
 
     ; restore name table address to default
