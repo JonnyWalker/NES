@@ -192,6 +192,7 @@ Loop:
     .include "handleButton.asm"
     .include "computeNTIndex.asm"
     .include "checkAndSetWinner.asm"
+    .include "drawWinner.asm"
 
 NMI:
     PHA 
@@ -205,7 +206,7 @@ NMI:
     STA $4014
 
     LDA DRAW_CHARATER_NEXT_FRAME
-    BEQ drawNothing
+    BEQ drawNoCharacter
     LDA #$00
     STA DRAW_CHARATER_NEXT_FRAME ; do not draw next frame
 
@@ -215,13 +216,19 @@ NMI:
     LDX STATE_POINTER
     STA STATE, X
     JSR changeCharacterAtNT2O
-    JMP drawNothing
+    JMP drawNoCharacter
 drawX:
     LDA #(X_ASCII_VALUE)
     LDX STATE_POINTER
     STA STATE, X
     JSR changeCharacterAtNT2X
-drawNothing:
+drawNoCharacter:
+    LDA WINNER
+    BEQ doNotDrawWinner
+    JSR drawWinner
+    LDA #$00   ; draw this only once
+    STA WINNER
+doNotDrawWinner:
 
     ; restore name table address to default
     LDA #$20
