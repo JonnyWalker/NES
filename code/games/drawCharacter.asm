@@ -269,7 +269,7 @@ changeCharacterAtNT2X:
     LDA X_Tiles+1
     STA $2007
 
-    ;TODO: this hack is only safe for TicTacToe
+    ;TODO: this hack is only safe for TicTacToe (may cause an overflow in other cases)
     LDA NAME_TABLE_INDEX_LO
     CLC
     ADC #$20 
@@ -344,4 +344,3 @@ Location: ; HI-Byte, LO-Byte for register $2006
    .byte $22, $2C, $22, $2D, $22, $4C, $22, $4D ; left bottom
    .byte $22, $2F, $22, $30, $22, $4F, $22, $50 ; middle bottom
    .byte $22, $32, $22, $33, $22, $52, $22, $53 ; right bottom
-   .byte $00, $00, $00, $00, $00, $00, $00, $00

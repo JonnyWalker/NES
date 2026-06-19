@@ -1,4 +1,4 @@
-; TODO: explain magic +3  and magic -1
+; TODO: explain magic +3 
 ; compute name table index from sprite x and y
 ; 32 columns, 8 pixel each tile
 ; NameTable Index  
