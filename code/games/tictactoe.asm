@@ -15,10 +15,11 @@ CURSOR_X: .byte $00
 CURSOR_Y: .byte $00
 CURSOR_PLAETTE: .byte $00 ; used to change cursor color
 STICKYINPUT: .byte $00 ; Only one input per click
-; 01 is X, 
-; 10 is 0
-; 00 is nothing. 11 is undef. 
+; $58 is X, 
+; $4F is 0
+; 00 is nothing
 STATE: .byte $00, $00, $00, $00, $00, $00, $00, $00, $00
+STATE_POINTER: .byte $00
 ; if unequal 00: NMI will draw character at next frame at cursor x,y
 DRAW_CHARATER_NEXT_FRAME: .byte $00 
 buttons: .res 1
@@ -134,6 +135,19 @@ ClearNametable:
     LDA #$00
     STA CURSOR_PLAETTE
 
+    ; set game state to empty
+    LDA #$00
+    STA STATE
+    STA STATE+1
+    STA STATE+2
+    STA STATE+3
+    STA STATE+4
+    STA STATE+5
+    STA STATE+6
+    STA STATE+7
+    STA STATE+8
+    STA STATE_POINTER
+
     ; restore name table address to default
     LDA #$20
     STA $2006
@@ -149,8 +163,10 @@ ClearNametable:
 
 Loop:
     JSR readjoy
+    JSR handleDPad
     JSR handleButton
     JSR updateCursor
+    JSR updateStatePointer
     JSR spriteXY_To_NameTableIndex
     ; asure this code only runs once a frame (e.g. for stick timing)
     ; by waiting for the vblank (next code will be NMI)
@@ -186,8 +202,14 @@ NMI:
     LDA CURSOR_PLAETTE
     BEQ drawX 
     JSR changeCharacterAtNT2O
+    LDA #$58
+    LDX STATE_POINTER
+    STA STATE, X
     JMP drawNothing
 drawX:
+    LDA #$4F
+    LDX STATE_POINTER
+    STA STATE, X
     JSR changeCharacterAtNT2X
 drawNothing:
 

@@ -49,3 +49,102 @@ MoveSpritesX:
     LDA CURSOR_PLAETTE
     STA $020E    
     RTS
+
+
+updateStatePointer:
+    LDA CURSOR_Y
+    CMP #$55
+    BEQ FirstROW
+
+    LDA CURSOR_Y
+    CMP #$6D
+    BEQ SecondROW
+
+    LDA CURSOR_Y
+    CMP #$85
+    BEQ ThirdROW
+
+    JMP EndOfUpdate ; should be unreachable
+
+
+FirstROW:
+    LDA CURSOR_X
+    CMP #$60
+    BEQ State0
+
+    LDA CURSOR_X
+    CMP #$78
+    BEQ State1
+
+    LDA CURSOR_X
+    CMP #$90
+    BEQ State2
+
+    JMP EndOfUpdate ; should be unreachable
+
+State0:
+    LDX #$00
+    JMP EndOfUpdate
+State1:
+    LDX #$01
+    JMP EndOfUpdate
+State2:
+    LDX #$02
+    JMP EndOfUpdate
+
+SecondROW:
+    LDA CURSOR_X
+    CMP #$60
+    BEQ State3
+
+    LDA CURSOR_X
+    CMP #$78
+    BEQ State4
+
+    LDA CURSOR_X
+    CMP #$90
+    BEQ State5
+
+    JMP EndOfUpdate ; should be unreachable
+
+State3:
+    LDX #$03
+    JMP EndOfUpdate
+State4:
+    LDX #$04
+    JMP EndOfUpdate
+State5:
+    LDX #$05
+    JMP EndOfUpdate
+
+ThirdROW:
+    LDA CURSOR_X
+    CMP #$60
+    BEQ State6
+
+    LDA CURSOR_X
+    CMP #$78
+    BEQ State7
+
+    LDA CURSOR_X
+    CMP #$90
+    BEQ State8
+
+    JMP EndOfUpdate ; should be unreachable
+
+State6:
+    LDX #$06
+    JMP EndOfUpdate
+State7:
+    LDX #$07
+    JMP EndOfUpdate
+State8:
+    LDX #$08
+    JMP EndOfUpdate
+
+EndOfUpdate:
+
+    TXA 
+    STA STATE_POINTER
+
+    RTS
