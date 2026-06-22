@@ -13,8 +13,10 @@
 .segment "ZEROPAGE" ; LSB 0 - FF
 CURSOR_X: .byte $00 
 CURSOR_Y: .byte $00
-CURSOR_PLAETTE: .byte $00 ; used to change cursor color
-STICKYINPUT: .byte $00 ; Only one input per click
+; used to change cursor color to red or green
+CURSOR_PLAETTE: .byte $00 
+; frame counter; Only one input per click
+STICKYINPUT: .byte $00 
 ; $58 is X, 
 ; $4F is O
 ; $00 is nothing

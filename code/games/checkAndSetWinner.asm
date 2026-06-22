@@ -1,8 +1,9 @@
-; parameter: ASCII value in X
+; parameter: ASCII value of winner in X register
 ; check STATE
 ; 0 1 2
 ; 3 4 5
 ; 6 7 8
+; And set zp variable WINNER to ASCII value "X" or "O"
 checkAndSetWinner:
     ; dont check if a character will be drawn next frame
     LDA DRAW_CHARATER_NEXT_FRAME

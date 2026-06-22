@@ -43,7 +43,8 @@ changeCharacterAtNT2O:
     LDA O_Tiles+1
     STA $2007
 
-    ;TODO: this hack is only safe for TicTacToe
+    ; TODO: this hack is only safe for TicTacToe
+    ; overflow possible for other games
     LDA NAME_TABLE_INDEX_LO
     CLC
     ADC #$20 

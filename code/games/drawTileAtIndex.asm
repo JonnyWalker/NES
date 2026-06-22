@@ -4,6 +4,7 @@ NAME_TABLE_INDEX_HI: .byte $00
 
 .segment "STARTUP"
 
+; draws a tile at name table location
 ; Parameter: Tile Number in X, Index in zero page variables
 DrawTileAtIndex:
     LDA NAME_TABLE_INDEX_HI

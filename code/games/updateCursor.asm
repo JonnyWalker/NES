@@ -50,7 +50,8 @@ MoveSpritesX:
     STA $020E    
     RTS
 
-
+; set a pointer to one of 9 state entries in zp 
+; by evaluation the cursor position 
 updateStatePointer:
     LDA CURSOR_Y
     CMP #$55

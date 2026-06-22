@@ -1,3 +1,4 @@
+; draw the text "THE WINNER IS" and "O" or "X"
 drawWinner:
     LDA #$20
     STA $2006

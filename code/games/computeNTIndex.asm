@@ -1,5 +1,5 @@
 ; TODO: explain magic +3 
-; compute name table index from sprite x and y
+; compute name table index from sprite x and y (cursor pos)
 ; 32 columns, 8 pixel each tile
 ; NameTable Index  
 ; = ((Y+3)//8)*32+(X//8)
