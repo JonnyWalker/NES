@@ -72,16 +72,3 @@ X_Tiles:
 
 O_Tiles:
    .byte $2C, $2D, $2E, $2F
-
-Location: ; HI-Byte, LO-Byte for register $2006
-   .byte $21, $6C, $21, $6D, $21, $8C, $21, $8D ; left top
-   .byte $21, $6F, $21, $70, $21, $8F, $21, $90 ; middle top
-   .byte $21, $72, $21, $73, $21, $92, $21, $93 ; right top
-
-   .byte $21, $CC, $21, $CD, $21, $EC, $21, $ED ; left middle
-   .byte $21, $CF, $21, $D0, $21, $EF, $21, $F0 ; middle middle
-   .byte $21, $D2, $21, $D3, $21, $F2, $21, $F3 ; right middle
-
-   .byte $22, $2C, $22, $2D, $22, $4C, $22, $4D ; left bottom
-   .byte $22, $2F, $22, $30, $22, $4F, $22, $50 ; middle bottom
-   .byte $22, $32, $22, $33, $22, $52, $22, $53 ; right bottom

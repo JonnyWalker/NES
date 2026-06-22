@@ -135,26 +135,7 @@ ClearNametable:
     STA $2005 ; X position (this also sets the w register)
     STA $2005 ; Y position (this also clears the w register)
 
-    ; move selector tile to first square
-    LDA #$55
-    STA CURSOR_Y
-    LDA #$60
-    STA CURSOR_X
-    LDA #$00
-    STA CURSOR_PLAETTE
-
-    ; set game state to empty
-    LDA #$00
-    STA STATE
-    STA STATE+1
-    STA STATE+2
-    STA STATE+3
-    STA STATE+4
-    STA STATE+5
-    STA STATE+6
-    STA STATE+7
-    STA STATE+8
-    STA STATE_POINTER
+    JSR initGame
 
     ; restore name table address to default
     LDA #$20
@@ -186,6 +167,7 @@ Loop:
     BIT $2002 ; wait for vblank 
     BPL :-
     JMP Loop
+    .include "initGame.asm"
     .include "drawTileAtIndex.asm"
     .include "readJoy.asm"
     .include "drawCharacter.asm"
