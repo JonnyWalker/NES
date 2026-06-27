@@ -6,7 +6,7 @@ HIGHEST_CURSOR = $55
 
 handleDPad:
     LDA buttons
-    BEQ NoDPadHandled ; If no button pressed reset Sticky time
+    BEQ NoDPadHandled   ; If no button pressed reset Sticky time
 
     LDX STICKYINPUT     ; Handle next button when sticky time is over
     BEQ DPAD_HANDLER

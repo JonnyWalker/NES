@@ -129,19 +129,12 @@ ClearNametable:
     ; Enable interrupts
     CLI
 
-    JSR drawGrid
-
     LDA #0
     STA $2005 ; X position (this also sets the w register)
     STA $2005 ; Y position (this also clears the w register)
 
     JSR initGame
-
-    ; restore name table address to default
-    LDA #$20
-    STA $2006
-    LDA #$00
-    STA $2006
+    JSR drawGrid
 
     LDA #%10010000 ; enable NMI change background to use second chr set of tiles ($1000)
     STA $2000
@@ -150,10 +143,20 @@ ClearNametable:
     LDA #%00011110
     STA $2001
 
-Loop:
+    ; restore name table address to default
+    LDA #$20
+    STA $2006
+    LDA #$00
+    STA $2006
+
+GameLoop:
+    ; main game code
     JSR readjoy
     JSR handleDPad
     JSR handleButton
+
+    LDA buttons
+    BEQ NoInput ; dont waste cpu cycles 
     JSR updateCursor
     JSR updateStatePointer
     JSR spriteXY_To_NameTableIndex
@@ -161,12 +164,35 @@ Loop:
     JSR checkAndSetWinner
     LDX #(O_ASCII_VALUE)
     JSR checkAndSetWinner
+NoInput:
+
+    ; switch to game over loop if a winner is found
+    LDA WINNER
+    BNE WaitForStartButton
+
+    ; TODO: switch to game over loop if 9 symbols have been drawn
+
     ; asure this code only runs once a frame (e.g. for stick timing)
     ; by waiting for the vblank (next code will be NMI)
 :
     BIT $2002 ; wait for vblank 
     BPL :-
-    JMP Loop
+    JMP GameLoop
+
+WaitForStartButton:
+:
+    BIT $2002 ; wait for vblank 
+    BPL :-
+    JSR readjoy
+    LDA buttons
+    CMP #%00010000
+    BEQ NewGame
+    JMP WaitForStartButton
+
+; restart game
+NewGame:
+    JMP Reset
+
     .include "initGame.asm"
     .include "drawTileAtIndex.asm"
     .include "readJoy.asm"
@@ -189,6 +215,8 @@ NMI:
     LDA #$02 
     STA $4014
 
+    ; draw new character at cursor pos if button was pressed
+    ; and change state at state pointer to this symbol (X or O)
     LDA DRAW_CHARATER_NEXT_FRAME
     BEQ drawNoCharacter
     LDA #$00
@@ -214,7 +242,7 @@ drawNoCharacter:
     STA WINNER
 doNotDrawWinner:
 
-    ; restore name table address to default
+    ; restore name table address to default after possible draw
     LDA #$20
     STA $2006
     LDA #$00
