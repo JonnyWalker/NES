@@ -44,6 +44,9 @@ initGame:
     STA STATE+8
     STA STATE_POINTER
 
+    LDA #$00
+    STA CHARACTERS_PLACED
+
     ; draw empty grid
     LDX #$00
 EmptyLoop:

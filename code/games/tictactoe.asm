@@ -22,6 +22,7 @@ STICKYINPUT: .byte $00
 ; $00 is nothing
 STATE: .byte $00, $00, $00, $00, $00, $00, $00, $00, $00
 STATE_POINTER: .byte $00
+CHARACTERS_PLACED: .byte $00
 ; $58 = X wins, 
 ; $4F = O wins,
 ; $00 = no winner (yet)
@@ -170,7 +171,10 @@ NoInput:
     LDA WINNER
     BNE WaitForStartButton
 
-    ; TODO: switch to game over loop if 9 symbols have been drawn
+    ; switch to game over loop if 9 symbols have been drawn
+    LDA CHARACTERS_PLACED
+    CMP #$09
+    BEQ WaitForStartButton    
 
     ; asure this code only runs once a frame (e.g. for stick timing)
     ; by waiting for the vblank (next code will be NMI)
@@ -228,12 +232,17 @@ NMI:
     LDX STATE_POINTER
     STA STATE, X
     JSR changeCharacterAtNT2O
-    JMP drawNoCharacter
+    JMP characterPlaced
 drawX:
     LDA #(X_ASCII_VALUE)
     LDX STATE_POINTER
     STA STATE, X
     JSR changeCharacterAtNT2X
+characterPlaced:
+    LDA CHARACTERS_PLACED ; CHARACTERS_PLACED +1 
+    CLC
+    ADC #$01 
+    STA CHARACTERS_PLACED
 drawNoCharacter:
     LDA WINNER
     BEQ doNotDrawWinner
