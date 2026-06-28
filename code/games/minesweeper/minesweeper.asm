@@ -151,6 +151,10 @@ NMI:
     TYA
     PHA
 
+    ; copy sprite data from $0200 => PPU memory for display
+    LDA #$02 
+    STA $4014
+
     PLA
     TAY
     PLA
@@ -163,10 +167,10 @@ PaletteData: ; maxvalue 0x36
   .byte $3F,$1A,$27,$18, $3F,$16,$30,$27, $3F,$16,$30,$27, $3F,$0F,$36,$17  ;sprite palette data
 
 SpriteData: ; Y,Tileindex, ATTR, X
-  .byte $08, $01, $01, $08 ; Cursor
-  .byte $08, $02, $01, $10
-  .byte $10, $03, $01, $08
-  .byte $10, $04, $01, $10
+  .byte $08, $01, $00, $08 ; Cursor
+  .byte $08, $02, $00, $10
+  .byte $10, $03, $00, $08
+  .byte $10, $04, $00, $10
 
 Level01:
     .byte $01,$01,$00,$00,$00,$00,$00,$00,$00,$00,$01,$0a,$01,$00,$00,$00
