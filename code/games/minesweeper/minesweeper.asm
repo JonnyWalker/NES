@@ -102,7 +102,6 @@ LoadSprites:
 ; this for $2000 and $2800)
     LDX #$00
     LDY #$00
-    LDA $2002
     LDA #$20
     STA $2006
     LDA #$00
@@ -123,12 +122,27 @@ ClearNametable:
     STA $2005 ; Y position (this also clears the w register)
 
     JSR initGame
+    JSR drawBoard
+
+    LDA #%10010000 ; enable NMI change background to use second chr set of tiles ($1000)
+    STA $2000
+    ; Enabling sprites and background for left-most 8 pixels
+    ; Enable sprites and background
+    LDA #%00011110
+    STA $2001
+
+    ; restore name table address to default
+    LDA #$20
+    STA $2006
+    LDA #$00
+    STA $2006
 
 GameLoop:
     ; main game code
     JMP GameLoop
 
     .include "initGame.asm"
+    .include "drawBoard.asm"
 
 NMI:
     PHA 
@@ -145,11 +159,11 @@ NMI:
     RTI
 
 PaletteData: ; maxvalue 0x36
-  .byte $3F,$20,$1A,$0F, $3F,$10,$1A,$0F, $3F,$30,$21,$0f, $3F,$27,$17,$0F  ;background palette data
-  .byte $3F,$16,$27,$18, $3F,$1A,$30,$27, $3F,$16,$30,$27, $3F,$0F,$36,$17  ;sprite palette data
+  .byte $3F,$20,$16,$0F, $3F,$10,$1A,$0F, $3F,$30,$21,$0f, $3F,$27,$17,$0F  ;background palette data
+  .byte $3F,$1A,$27,$18, $3F,$16,$30,$27, $3F,$16,$30,$27, $3F,$0F,$36,$17  ;sprite palette data
 
-SpriteData:
-  .byte $08, $01, $01, $08 ; Y,Tileindex, ATTR, X
+SpriteData: ; Y,Tileindex, ATTR, X
+  .byte $08, $01, $01, $08 ; Cursor
   .byte $08, $02, $01, $10
   .byte $10, $03, $01, $08
   .byte $10, $04, $01, $10
