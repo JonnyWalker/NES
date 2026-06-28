@@ -1,4 +1,4 @@
-;ca65 minesweeper.asm -o t.o -t nes && ld65 t.o -o minesweeper.nes -t nes
+;ca65 minesweeper.asm -o t.o -t nes && ld65 -C nes_big_zp.cfg t.o -o minesweeper.nes
 .segment "HEADER"
 .byte "NES"
 .byte $1a
@@ -10,7 +10,16 @@
 .byte $00
 .byte $00
 .byte $00, $00, $00, $00, $00 ; filler bytes
-.segment "ZEROPAGE" ; LSB 0 - FF
+.segment "ZEROPAGE" ; LSB 0 - FF (if modified cfg file is used)
+CURSOR_X: .byte $00 
+CURSOR_Y: .byte $00
+LEVEL_PTR: .byte $00
+; TODO: move to normal memory
+; bit-vector: 0=invisible, 1=visible
+; at 16x12 tiles: 2 bytes = one row
+VISIBLE: .byte $00, $00, $00, $00, $00, $00, $00, $00 
+         .byte $00, $00, $00, $00, $00, $00, $00, $00
+         .byte $00, $00, $00, $00, $00, $00, $00, $00
 .segment "STARTUP"
 Reset:
     SEI ; Disables all interrupts
@@ -112,9 +121,14 @@ ClearNametable:
     LDA #0
     STA $2005 ; X position (this also sets the w register)
     STA $2005 ; Y position (this also clears the w register)
+
+    JSR initGame
+
 GameLoop:
     ; main game code
     JMP GameLoop
+
+    .include "initGame.asm"
 
 NMI:
     PHA 
@@ -153,6 +167,20 @@ Level01:
     .byte $00,$00,$00,$00,$01,$0a,$02,$01,$01,$0a,$03,$0a,$01,$01,$0a,$01
     .byte $01,$01,$00,$00,$01,$01,$01,$00,$01,$01,$02,$01,$01,$01,$01,$01
     .byte $0a,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+
+Level02:
+    .byte $00,$00,$01,$0a,$01,$00,$00,$00,$00,$01,$02,$02,$01,$01,$0a,$02
+    .byte $00,$00,$01,$01,$01,$00,$00,$01,$01,$02,$0a,$0a,$01,$02,$03,$0a
+    .byte $00,$00,$00,$00,$00,$00,$00,$01,$0a,$03,$03,$02,$02,$02,$0a,$02
+    .byte $00,$00,$01,$01,$01,$00,$01,$02,$03,$0a,$01,$01,$02,$0a,$02,$01
+    .byte $00,$00,$01,$0a,$01,$00,$01,$0a,$02,$01,$01,$01,$0a,$02,$01,$00
+    .byte $01,$01,$01,$01,$01,$00,$02,$02,$02,$00,$00,$01,$02,$02,$01,$00
+    .byte $0a,$01,$00,$00,$00,$00,$01,$0a,$01,$00,$00,$00,$02,$0a,$02,$00
+    .byte $01,$01,$00,$00,$00,$00,$01,$01,$01,$00,$00,$00,$02,$0a,$02,$00
+    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01,$01,$01,$00
+    .byte $00,$00,$00,$00,$00,$00,$00,$00,$01,$01,$01,$00,$00,$00,$01,$01
+    .byte $00,$01,$01,$01,$00,$00,$00,$00,$01,$0a,$02,$01,$01,$00,$01,$0a
+    .byte $00,$01,$0a,$01,$00,$00,$00,$00,$01,$01,$02,$0a,$01,$00,$01,$01
 
 .segment "VECTORS"
     .word NMI

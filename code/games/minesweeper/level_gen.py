@@ -5,6 +5,10 @@ MINE_NUM = 20
 MINE_HEX_VALUE = 10
 board = [0]*(WIDTH*HEIGHT)
 
+assert WIDTH>=1
+assert HEIGHT>=1
+assert MINE_NUM<=WIDTH*HEIGHT
+
 # compute mine positions
 indices = [x for x in range(WIDTH*HEIGHT)]
 mine_positions = []
@@ -17,7 +21,7 @@ for i in range(MINE_NUM):
 for i in mine_positions:
     board[i] = MINE_HEX_VALUE
 
-    # compute numbers
+# compute numbers
 for i in range(len(board)):
     if board[i] == MINE_HEX_VALUE:
         continue
@@ -58,9 +62,10 @@ for i in range(len(board)):
     for p in positions:
         if board[p]==MINE_HEX_VALUE:
             mine_counter +=1
+    # change number
     board[i] = mine_counter
 
-# print game
+# print game (ca65 syntax)
 index = 0
 while index<WIDTH*HEIGHT:
     if index % WIDTH == 0:
