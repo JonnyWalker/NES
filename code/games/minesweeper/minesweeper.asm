@@ -187,4 +187,4 @@ Level02:
     .word Reset
     ; 
 .segment "CHARS"
-    .incbin "tilemap.chr"
+    .incbin "tileset.chr"
