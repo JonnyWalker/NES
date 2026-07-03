@@ -20,6 +20,7 @@ LEVEL_PTR: .byte $00
 VISIBLE: .byte $00, $00, $00, $00, $00, $00, $00, $00 
          .byte $00, $00, $00, $00, $00, $00, $00, $00
          .byte $00, $00, $00, $00, $00, $00, $00, $00
+buttons: .res 1
 .segment "STARTUP"
 Reset:
     SEI ; Disables all interrupts
@@ -139,10 +140,24 @@ ClearNametable:
 
 GameLoop:
     ; main game code
+    JSR readjoy
+    JSR handleDPad
+    LDA buttons
+    BEQ NoInput ; dont waste cpu cycles
+    JSR updateCursor
+NoInput:
+    ; asure this code only runs once a frame (e.g. for stick timing)
+    ; by waiting for the vblank (next code will be NMI)
+:
+    BIT $2002 ; wait for vblank 
+    BPL :-
     JMP GameLoop
 
     .include "initGame.asm"
     .include "drawBoard.asm"
+    .include "readJoy.asm"
+    .include "handleButton.asm"
+    .include "updateCursor.asm"
 
 NMI:
     PHA 
