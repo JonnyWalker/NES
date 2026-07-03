@@ -1,4 +1,5 @@
 from random import randrange
+LEVEL_NUMBER = 1
 WIDTH = 16
 HEIGHT = 12
 MINE_NUM = 20
@@ -67,11 +68,50 @@ for i in range(len(board)):
 
 # print game (ca65 syntax)
 index = 0
+print(f"LEVEL_0{LEVEL_NUMBER}:")
 while index<WIDTH*HEIGHT:
     if index % WIDTH == 0:
         print()
-        print(".byte ", end='')
-    hex_value = hex(board[index])[2:]
-    print(f"$0{hex_value},", end='')
+        print("    .byte ", end='')
+    hex_value = "{:02x}".format(board[index])
+    print(f"${hex_value}", end='') 
     index += 1
+    if index % WIDTH != 0:
+        print(f",", end='')   
 print()
+# print game colors
+assert HEIGHT%2==0
+assert WIDTH%2==0
+palette_mapping = {
+    0: 0, #hidden tile
+    1: 0,
+    3: 2,
+    2: 1,
+    4: 1,
+    5: 2,
+    6: 2,
+    7: 2,
+    8: 2,
+    MINE_HEX_VALUE: 3
+}
+# first byte affects tile 0,1,17,18
+# second byte affects tile 2,3,19,20 ..
+# bit-order (2 Bits each) in one byte: 
+
+print(f"LEVEL_0{LEVEL_NUMBER}_COLOR:")
+for i in range(HEIGHT//2):
+    print("    .byte ", end='')
+    for j in range(WIDTH//2):
+        top_left    = palette_mapping[board[i*2*WIDTH+j*2]]
+        top_right   = palette_mapping[board[i*2*WIDTH+(j*2+1)]]
+        bottom_left = palette_mapping[board[i*2*WIDTH+WIDTH+j*2]]
+        bottom_right = palette_mapping[board[i*2*WIDTH+WIDTH+(j*2+1)]]
+        # 8-Bit: (bottom-right, bottom-left, top-right ,top-left)
+        color = "{:02x}".format((bottom_right << 6) | 
+                 (bottom_left << 4) |
+                 (top_right << 2) | 
+                  top_left)
+        print(f"${color}", end='')
+        if j+1 != WIDTH//2:
+            print(f",", end='') 
+    print()
