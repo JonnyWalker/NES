@@ -1,6 +1,5 @@
 drawBoard:
 
-
     LDA #$20
     STA $2006
     LDA #$80
@@ -94,7 +93,7 @@ EndOfDraw:
     RTS
 
 
-; assumes Y is the pointer
+; assumes Y is the level tile pointer
 _levelTileToA:
     ; TODO: check VISIBEL bit array at pos Y
     ; return empty tile if the tile is not visible
