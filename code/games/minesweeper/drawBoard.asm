@@ -1,5 +1,4 @@
 drawBoard:
-
     LDA #$20
     STA $2006
     LDA #$80
@@ -43,7 +42,7 @@ drawTileTopEnd:
     CPX #$10
     BNE drawTileTop
 
-    ; read line again
+    ; read line again by resetting Y by 16 meta-tiles
     TYA
     SEC
     SBC #$10
@@ -90,6 +89,20 @@ drawTileBottomEnd:
     BEQ EndOfDraw
     JMP drawAll
 EndOfDraw:
+    ; now choose the palettes of the meta tiles
+    LDA #$23
+    STA $2006
+    LDA #$C8
+    STA $2006
+
+    LDY #$00
+drawTileColor:
+    JSR _levelTileColorToA
+    STA $2007
+    INY
+    CPY #$40
+    BNE drawTileColor
+EndofDrawSub:
     RTS
 
 
@@ -103,10 +116,24 @@ _levelTileToA:
     CMP #$02
     BEQ Level2
 Level1:
-    LDA Level01, Y
+    LDA LEVEL_01, Y
     RTS
 Level2:
-    LDA Level02, Y
+    LDA LEVEL_02, Y
+    RTS
+
+; assumes Y is the level tile pointer
+_levelTileColorToA:
+    LDA LEVEL_PTR
+    CMP #$01
+    BEQ Level1_COLOR
+    CMP #$02
+    BEQ Level2_COLOR
+Level1_COLOR:
+    LDA LEVEL_01_COLOR, Y
+    RTS
+Level2_COLOR:
+    LDA LEVEL_02_COLOR, Y
     RTS
 
 _drawHiddenTop:
