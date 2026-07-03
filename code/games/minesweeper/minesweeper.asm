@@ -178,8 +178,8 @@ NMI:
     RTI
 
 PaletteData: ; maxvalue 0x36
-  .byte $3F,$20,$16,$0F, $3F,$10,$1A,$0F, $3F,$30,$21,$0f, $3F,$27,$17,$0F  ;background palette data
-  .byte $3F,$1A,$27,$18, $3F,$16,$30,$27, $3F,$16,$30,$27, $3F,$0F,$36,$17  ;sprite palette data
+  .byte $10,$12,$00,$20, $10,$19,$00,$16, $10,$3F,$00,$0f, $10,$27,$17,$0F  ;background palette data
+  .byte $10,$1A,$27,$18, $10,$16,$30,$27, $10,$16,$30,$27, $10,$0F,$36,$17  ;sprite palette data
 
 SpriteData: ; Y,Tileindex, ATTR, X
   .byte $08, $01, $00, $08 ; Cursor
