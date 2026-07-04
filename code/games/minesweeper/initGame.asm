@@ -22,9 +22,9 @@ initGame:
    LDA #$00
    STA $020B
    LDA #$08
-   STA $020
+   STA $020F
 
-   LDA #$01
+   LDA #$02
    STA LEVEL_PTR
 
    RTS

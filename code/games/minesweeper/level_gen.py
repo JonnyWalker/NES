@@ -84,15 +84,15 @@ assert HEIGHT%2==0
 assert WIDTH%2==0
 palette_mapping = {
     0: 0, #hidden tile
-    1: 0,
-    3: 2,
+    1: 1,
     2: 1,
-    4: 1,
+    3: 2,
+    4: 2,
     5: 2,
     6: 2,
     7: 2,
     8: 2,
-    MINE_HEX_VALUE: 3
+    MINE_HEX_VALUE: 3,
 }
 # first byte affects tile 0,1,17,18
 # second byte affects tile 2,3,19,20 ..
