@@ -1,4 +1,7 @@
 
+.segment "ZEROPAGE"
+NAME_TABLE_INDEX_LO: .byte $00
+NAME_TABLE_INDEX_HI: .byte $00
 ; compute the corresponding tile (upper left)
 ; in the name table of a level pointer value i.
 ; The level pointer points to the data in the hard 
@@ -22,9 +25,7 @@
 ; index region is only 32 bytes wide (0-31), while the other
 ; regions are 64 bytes wide.
 ;
-; The mem area start must also be hard coded, because we
-; have no addressing mode for 16-Bit variables.
-; the following Python code describes the computation:
+; The following Python code describes the computation:
 ;
 ;def magic(i): # i is the level index ptr
 ;    if i>=160:
@@ -47,6 +48,65 @@
 ; The subroutine sets the name table pointer HIGH to: 
 ; to either $20, $21, $22 or $23
 ; and the LOW part to i*2+j*32
+.segment "STARTUP"
 levelptr_to_NameTableIndex:
-    ; TODO: port Python code to assembly :D
+    LDA CURSOR_TILE_PTR
+    SEC 
+    SBC #$A0
+    BCS between160_191 ; i-160>=0
+
+    LDA CURSOR_TILE_PTR
+    SEC 
+    SBC #$60
+    BCS between96_159 ; i-96>=0
+
+    LDA CURSOR_TILE_PTR
+    SEC 
+    SBC #$20
+    BCS between32_95 ; i-32>=0
+
+    TAX ; X contains zero index aligned i 
+    LDA #$20
+    STA NAME_TABLE_INDEX_HI
+    JMP HI_Part_Computed
+
+between160_191:
+    TAX ; X contains zero index aligned i (i-160)
+    LDA #$23
+    STA NAME_TABLE_INDEX_HI
+    JMP HI_Part_Computed
+
+between96_159:
+    TAX ; X contains zero index aligned i (i-96)
+    LDA #$22
+    STA NAME_TABLE_INDEX_HI
+    JMP HI_Part_Computed
+
+between32_95:
+    TAX ; X contains zero index aligned i (i-32)
+    LDA #$21
+    STA NAME_TABLE_INDEX_HI
+    JMP HI_Part_Computed
+    
+HI_Part_Computed:
+    ; compute i>>4 followed by i<<5 to compute the j part
+    TXA ; original aligned i
+    LSR
+    LSR
+    LSR
+    LSR
+    ASL
+    ASL
+    ASL
+    ASL
+    ASL
+    STA NAME_TABLE_INDEX_LO
+    ; NAME_TABLE_INDEX_LO contains the j part
+    ; get original aligned i and compute i<<1
+    TXA
+    ASL
+    ; Add i*2 to NAME_TABLE_INDEX_LO
+    CLC 
+    ADC NAME_TABLE_INDEX_LO
+    STA NAME_TABLE_INDEX_LO
     RTS

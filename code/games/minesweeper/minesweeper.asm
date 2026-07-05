@@ -15,12 +15,6 @@ CURSOR_X: .byte $00
 CURSOR_Y: .byte $00
 CURSOR_TILE_PTR: .byte $00 ; the level tile at the cursor location
 LEVEL_NUMBER: .byte $00
-; FIXME: unused
-; bit-vector: 0=invisible, 1=visible
-; at 16x12 tiles: 2 bytes = one row
-VISIBLE: .byte $00, $00, $00, $00, $00, $00, $00, $00 
-         .byte $00, $00, $00, $00, $00, $00, $00, $00
-         .byte $00, $00, $00, $00, $00, $00, $00, $00
 buttons: .res 1
 .segment "STARTUP"
 Reset:
@@ -68,6 +62,8 @@ CLEARMEM:
     JSR nesInit
     JSR initGame
     JSR drawBoard
+    JSR updateCursor ; also updates level pointer (CURSOR_TILE_PTR)
+    JSR levelptr_to_NameTableIndex
 
     LDA #%10010000 ; enable NMI change background to use second chr set of tiles ($1000)
     STA $2000
@@ -91,7 +87,7 @@ GameLoop:
 
     ; those subroutines only compute something new
     ; after a user input
-    JSR updateCursor ; also updates level pointer
+    JSR updateCursor ; also updates level pointer (CURSOR_TILE_PTR)
     JSR levelptr_to_NameTableIndex
 NoInput:
     ; asure this code only runs once a frame (e.g. for stick timing)
