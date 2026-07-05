@@ -2,13 +2,14 @@
 ; frame counter; Only one input per click
 STICKYINPUT: .byte $00 
 .segment "STARTUP"
-STICKY_TIME = $10 ; arbitrary number of frames to wait for next input
+STICKY_TIME = $08 ; arbitrary number of frames to wait for next input
 RIGHTMOST_CURSOR = $F0
 LEFTMOST_CURSOR = $00
 LOWEST_CURSOR = $CD
 HIGHEST_CURSOR = $1D
 MINE_VALUE = $0a
-MINE_TILE_VALUE = $54; upper left
+MINE_TILE_VALUE = $54 ; upper left
+INVISIBLE_TILE_VALUE = $50 ; upper left
 
 handleDPad:
     LDA buttons
@@ -131,16 +132,41 @@ BUTTON_HANDLER:
     LDA buttons
     AND #%10000000
     BNE A_BUTTON
+
+    LDA buttons
+    AND #%01000000
+    BNE B_BUTTON
+
     JMP EndBUTTON
 
 A_BUTTON:
+    JSR handleAButton
+    JMP ButtonHandled
+
+B_BUTTON:
+    JSR handleBButton
+    JMP ButtonHandled
+
+NoButtonHandled:
+    ; Reset Sticky Time.
+    LDX #$00
+    STX STICKYINPUT
+    JMP EndBUTTON
+    
+ButtonHandled:
+    ; Increase Sticky Time.
+    LDX #(STICKY_TIME)
+    STX STICKYINPUT
+EndBUTTON:
+    RTS
+
+handleAButton:
     ; check if cursor is on mine tile
     LDY CURSOR_TILE_PTR
     JSR _levelTileToA
     CMP #(MINE_VALUE)
     BEQ drawMineExplode
-    JMP ButtonHandled
-
+    RTS
 drawMineExplode:
     LDA NAME_TABLE_INDEX_HI
     STA $2006
@@ -161,18 +187,36 @@ drawMineExplode:
     STA $2007
     LDA #$67
     STA $2007  
+    RTS
 
-    JMP ButtonHandled
+handleBButton:
+    ; check if not visibale 
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    STA $2006
+    LDA $2007
+    CMP #(INVISIBLE_TILE_VALUE)
+    BEQ drawFlag
+    RTS
+drawFlag:
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    STA $2006
+    LDA #$52
+    STA $2007
+    LDA #$53
+    STA $2007
 
-NoButtonHandled:
-    ; Reset Sticky Time.
-    LDX #$00
-    STX STICKYINPUT
-    JMP EndBUTTON
-    
-ButtonHandled:
-    ; Increase Sticky Time.
-    LDX #(STICKY_TIME)
-    STX STICKYINPUT
-EndBUTTON:
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    CLC
+    ADC #$20
+    STA $2006   
+    LDA #$62
+    STA $2007
+    LDA #$63
+    STA $2007  
     RTS
