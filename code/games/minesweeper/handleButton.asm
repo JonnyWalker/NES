@@ -8,8 +8,9 @@ LEFTMOST_CURSOR = $00
 LOWEST_CURSOR = $CD
 HIGHEST_CURSOR = $1D
 MINE_VALUE = $0a
-MINE_TILE_VALUE = $54 ; upper left
-INVISIBLE_TILE_VALUE = $50 ; upper left
+MINE_TILE_VALUE = $54      ; upper left of 2x2 meta tile
+INVISIBLE_TILE_VALUE = $50 ; upper left of 2x2 meta tile
+FLAG_TILE_VALUE = $52      ; upper left of 2x2 meta tile
 
 handleDPad:
     LDA buttons
@@ -161,11 +162,18 @@ EndBUTTON:
     RTS
 
 handleAButton:
+    ; reveal empty tile
+    LDY CURSOR_TILE_PTR
+    JSR _levelTileToA
+    CMP #$00
+    BEQ drawEmpty
+    
     ; check if cursor is on mine tile
     LDY CURSOR_TILE_PTR
     JSR _levelTileToA
     CMP #(MINE_VALUE)
     BEQ drawMineExplode
+
     RTS
 drawMineExplode:
     LDA NAME_TABLE_INDEX_HI
@@ -189,16 +197,50 @@ drawMineExplode:
     STA $2007  
     RTS
 
+drawEmpty:
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    STA $2006
+    LDA #$5A
+    STA $2007
+    LDA #$5B
+    STA $2007
+
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    CLC
+    ADC #$20
+    STA $2006   
+    LDA #$6A
+    STA $2007
+    LDA #$6B
+    STA $2007  
+    RTS
+
 handleBButton:
-    ; check if not visibale 
+    ; check if flag 
     LDA NAME_TABLE_INDEX_HI
     STA $2006
     LDA NAME_TABLE_INDEX_LO
     STA $2006
     LDA $2007
+    CMP #(FLAG_TILE_VALUE)
+    BEQ removeFlag
+
+    ; check if not visible 
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    STA $2006
+    LDA $2007
+
     CMP #(INVISIBLE_TILE_VALUE)
     BEQ drawFlag
+
     RTS
+
 drawFlag:
     LDA NAME_TABLE_INDEX_HI
     STA $2006
@@ -218,5 +260,27 @@ drawFlag:
     LDA #$62
     STA $2007
     LDA #$63
+    STA $2007  
+    RTS
+
+removeFlag:
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    STA $2006
+    LDA #$50
+    STA $2007
+    LDA #$51
+    STA $2007
+
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    CLC
+    ADC #$20
+    STA $2006   
+    LDA #$60
+    STA $2007
+    LDA #$61
     STA $2007  
     RTS
