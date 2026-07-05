@@ -15,6 +15,8 @@ CURSOR_X: .byte $00
 CURSOR_Y: .byte $00
 CURSOR_TILE_PTR: .byte $00 ; the level tile at the cursor location
 LEVEL_NUMBER: .byte $00
+NAME_TABLE_INDEX_LO: .byte $00
+NAME_TABLE_INDEX_HI: .byte $00
 buttons: .res 1
 .segment "STARTUP"
 Reset:
@@ -115,6 +117,16 @@ NMI:
     ; copy sprite data from $0200 => PPU memory for display
     LDA #$02 
     STA $4014
+
+    LDA buttons
+    BEQ NoDraw ; dont waste cpu cycles
+    JSR handleButton
+    ; restore name table address to default
+    LDA #$20
+    STA $2006
+    LDA #$00
+    STA $2006
+NoDraw:
 
     PLA
     TAY

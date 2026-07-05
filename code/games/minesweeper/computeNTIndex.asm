@@ -1,7 +1,3 @@
-
-.segment "ZEROPAGE"
-NAME_TABLE_INDEX_LO: .byte $00
-NAME_TABLE_INDEX_HI: .byte $00
 ; compute the corresponding tile (upper left)
 ; in the name table of a level pointer value i.
 ; The level pointer points to the data in the hard 
@@ -48,7 +44,6 @@ NAME_TABLE_INDEX_HI: .byte $00
 ; The subroutine sets the name table pointer HIGH to: 
 ; to either $20, $21, $22 or $23
 ; and the LOW part to i*2+j*32
-.segment "STARTUP"
 levelptr_to_NameTableIndex:
     LDA CURSOR_TILE_PTR
     SEC 

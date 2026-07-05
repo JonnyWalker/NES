@@ -7,6 +7,8 @@ RIGHTMOST_CURSOR = $F0
 LEFTMOST_CURSOR = $00
 LOWEST_CURSOR = $CD
 HIGHEST_CURSOR = $1D
+MINE_VALUE = $0a
+MINE_TILE_VALUE = $54; upper left
 
 handleDPad:
     LDA buttons
@@ -116,6 +118,7 @@ DPadHandled:
 EndDPAD:    
     RTS
 
+; assume inside NMI
 handleButton:
     LDA buttons
     BEQ NoButtonHandled ; If no button pressed reset Sticky time
@@ -131,25 +134,35 @@ BUTTON_HANDLER:
     JMP EndBUTTON
 
 A_BUTTON:
-    ; game logic: only draw on empty tiles
-    ; LDX STATE_POINTER
-    ; LDA STATE, X
-    ; ; skip when state is not $00 (which means empty)
-    ; BNE EndBUTTON
-
-    ; LDA #$01
-    ; STA DRAW_CHARATER_NEXT_FRAME
-
-    ; LDA CURSOR_PLAETTE
-    ; BEQ SwitchToPalette01
-    ; LDA #$00
-    ; STA CURSOR_PLAETTE
+    ; check if cursor is on mine tile
+    LDY CURSOR_TILE_PTR
+    JSR _levelTileToA
+    CMP #(MINE_VALUE)
+    BEQ drawMineExplode
     JMP ButtonHandled
 
-; SwitchToPalette01:
-;     LDA #$01
-;     STA CURSOR_PLAETTE
-;     JMP ButtonHandled
+drawMineExplode:
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    STA $2006
+    LDA #$56
+    STA $2007
+    LDA #$57
+    STA $2007
+
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    CLC
+    ADC #$20
+    STA $2006   
+    LDA #$66
+    STA $2007
+    LDA #$67
+    STA $2007  
+
+    JMP ButtonHandled
 
 NoButtonHandled:
     ; Reset Sticky Time.
