@@ -88,7 +88,11 @@ GameLoop:
     JSR handleDPad
     LDA buttons
     BEQ NoInput ; dont waste cpu cycles
-    JSR updateCursor
+
+    ; those subroutines only compute something new
+    ; after a user input
+    JSR updateCursor ; also updates level pointer
+    JSR levelptr_to_NameTableIndex
 NoInput:
     ; asure this code only runs once a frame (e.g. for stick timing)
     ; by waiting for the vblank (next code will be NMI)
@@ -103,6 +107,7 @@ NoInput:
     .include "readJoy.asm"
     .include "handleButton.asm"
     .include "updateCursor.asm"
+    .include "computeNTIndex.asm"
 
 NMI:
     PHA 
