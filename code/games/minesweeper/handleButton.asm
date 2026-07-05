@@ -174,7 +174,44 @@ handleAButton:
     CMP #(MINE_VALUE)
     BEQ drawMineExplode
 
-    RTS
+    ; a was pressed on a tile which is 
+    ; not empty or a mine: it musst be a number
+    LDY CURSOR_TILE_PTR
+    JSR _levelTileToA
+    ASL
+    CLC
+    ADC #$2E
+    ; X is $2E+tile*2
+    TAX 
+
+    ; draw the number
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    STA $2006
+    TXA
+    STA $2007
+    TXA
+    CLC
+    ADC #$01
+    STA $2007
+
+    LDA NAME_TABLE_INDEX_HI
+    STA $2006
+    LDA NAME_TABLE_INDEX_LO
+    CLC
+    ADC #$20
+    STA $2006 
+    TXA
+    CLC
+    ADC #$10 
+    STA $2007
+    TXA
+    CLC
+    ADC #$11 
+    STA $2007 
+    RTS 
+
 drawMineExplode:
     LDA NAME_TABLE_INDEX_HI
     STA $2006
