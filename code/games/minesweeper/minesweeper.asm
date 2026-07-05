@@ -13,7 +13,8 @@
 .segment "ZEROPAGE" ; LSB 0 - FF (if modified cfg file is used)
 CURSOR_X: .byte $00 
 CURSOR_Y: .byte $00
-LEVEL_PTR: .byte $00
+CURSOR_TILE_PTR: .byte $00 ; the level tile at the cursor location
+LEVEL_NUMBER: .byte $00
 ; TODO: move to normal memory
 ; bit-vector: 0=invisible, 1=visible
 ; at 16x12 tiles: 2 bytes = one row

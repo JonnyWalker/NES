@@ -24,7 +24,10 @@ initGame:
    LDA #$08
    STA $020F
 
+   LDA #$00
+   STA CURSOR_TILE_PTR ; cursor at tile zero (left top)
+
    LDA #$02
-   STA LEVEL_PTR
+   STA LEVEL_NUMBER ; which level data to use
 
    RTS

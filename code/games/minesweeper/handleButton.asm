@@ -45,6 +45,10 @@ MOVE_DOWN:
     CLC
     ADC #$10
     STA CURSOR_Y
+    LDA CURSOR_TILE_PTR
+    CLC 
+    ADC #$10
+    STA CURSOR_TILE_PTR
     
     JMP DPadHandled
 
@@ -58,6 +62,11 @@ MOVE_UP:
     SEC
     SBC #$10
     STA CURSOR_Y
+    LDA CURSOR_TILE_PTR
+    SEC 
+    SBC #$10
+    STA CURSOR_TILE_PTR
+
     JMP DPadHandled
 
 MOVE_RIGHT:
@@ -70,6 +79,11 @@ MOVE_RIGHT:
     CLC
     ADC #$10
     STA CURSOR_X
+    LDA CURSOR_TILE_PTR
+    ClC 
+    ADC #$01
+    STA CURSOR_TILE_PTR
+
     JMP DPadHandled
 
 MOVE_LEFT:
@@ -82,6 +96,11 @@ MOVE_LEFT:
     SEC
     SBC #$10
     STA CURSOR_X
+    LDA CURSOR_TILE_PTR
+    SEC 
+    SBC #$01
+    STA CURSOR_TILE_PTR
+    
     JMP DPadHandled
 
 NoDPadHandled:

@@ -110,7 +110,7 @@ EndofDrawSub:
 _levelTileToA:
     ; TODO: check VISIBEL bit array at pos Y
     ; return empty tile if the tile is not visible
-    LDA LEVEL_PTR
+    LDA LEVEL_NUMBER
     CMP #$01
     BEQ Level1
     CMP #$02
@@ -124,7 +124,7 @@ Level2:
 
 ; assumes Y is the level tile pointer
 _levelTileColorToA:
-    LDA LEVEL_PTR
+    LDA LEVEL_NUMBER
     CMP #$01
     BEQ Level1_COLOR
     CMP #$02
